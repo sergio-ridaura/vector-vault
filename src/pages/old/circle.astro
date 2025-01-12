@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG Circle Generator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #f5f5f5;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin: 10px 0 5px;
+      }
+      input {
+        padding: 5px;
+        width: 150px;
+        text-align: center;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      svg {
+        margin-top: 20px;
+      }
+      pre {
+        background: #e9ecef;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: left;
+        max-width: 90%;
+        overflow-x: auto;
+        font-family: monospace;
+        cursor: pointer;
+      }
+      pre:hover {
+        background: #d6d8db;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SVG Circle Generator</h1>
+
+    <!-- Formulario para generar el SVG -->
+    <form id="svg-form">
+      <label for="color">Circle Color:</label>
+      <input
+        type="text"
+        id="color"
+        name="color"
+        placeholder="e.g., blue"
+        required
+      />
+
+      <label for="width">Width:</label>
+      <input
+        type="number"
+        id="width"
+        name="width"
+        placeholder="e.g., 100"
+        required
+      />
+
+      <label for="height">Height:</label>
+      <input
+        type="number"
+        id="height"
+        name="height"
+        placeholder="e.g., 100"
+        required
+      />
+
+      <label for="radius">Radius:</label>
+      <input
+        type="number"
+        id="radius"
+        name="radius"
+        placeholder="e.g., 40"
+        required
+      />
+
+      <button type="submit">Generate SVG</button>
+    </form>
+
+    <!-- Contenedor para el SVG generado -->
+    <div id="svg-container"></div>
+    <button id="download-btn">Download SVG</button>
+    <pre id="svg-code" title="Click to copy the code"></pre>
+
+    <script>
+      // Generar el SVG dinámicamente
+      function generateSVG({
+        color,
+        width,
+        height,
+        radius,
+      }: {
+        color: string;
+        width: number;
+        height: number;
+        radius: number;
+      }): string {
+        return `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+      <circle cx="${width / 2}" cy="${height / 2}" r="${radius}" fill="${color}" />
+    </svg>
+  `.trim(); // Eliminar espacios en blanco innecesarios
+      }
+
+      // Descargar el SVG como archivo
+      function downloadSVG(svgContent: string) {
+        const blob = new Blob([svgContent], { type: "image/svg+xml" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "circle.svg";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      // Copiar el SVG al portapapeles
+      function copyToClipboard(text: string) {
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            alert("SVG code copied to clipboard!");
+          })
+          .catch((err) => {
+            console.error("Error copying text: ", err);
+            alert("Failed to copy SVG code.");
+            });
+          }
+
+      // Manejar el formulario
+      const form = document.getElementById("svg-form");
+      const svgContainer = document.getElementById("svg-container");
+      const svgCodeElement = document.getElementById("svg-code");
+      const downloadButton = document.getElementById("download-btn");
+      if (form) {
+        form.addEventListener("submit", (event) => {
+        event.preventDefault(); // Evitar recargar la página
+
+        // Obtener valores del formulario
+        const colorInput = document.getElementById("color") as HTMLInputElement;
+        const color = colorInput ? colorInput.value : "blue";
+        const widthInput = document.getElementById("width") as HTMLInputElement;
+        const width = widthInput ? parseInt(widthInput.value) : 100;
+        const heightInput = document.getElementById("height") as HTMLInputElement;
+        const height = heightInput ? parseInt(heightInput.value) : 100;
+        const radiusInput = document.getElementById("radius") as HTMLInputElement;
+        const radius = radiusInput ? parseInt(radiusInput.value) : 40;
+          // Generar el SVG
+          const svgContent = generateSVG({ color, width, height, radius });
+
+          // Mostrar el SVG generado
+          if (svgContainer) {
+            svgContainer.innerHTML = svgContent;
+          }
+
+          // Mostrar el código del SVG
+          if (svgCodeElement) {
+            svgCodeElement.textContent = svgContent;
+          }
+
+          // Configurar el botón de descarga
+          if (downloadButton) {
+            downloadButton.onclick = () => downloadSVG(svgContent);
+          }
+        });
+      }
+
+      // Configurar el evento de clic en el <pre> para copiar el código
+      if (svgCodeElement) {
+        svgCodeElement.addEventListener("click", () => {
+          if (svgCodeElement.textContent) {
+            copyToClipboard(svgCodeElement.textContent);
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

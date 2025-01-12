@@ -1,0 +1,48 @@
+---
+import Analytics from '@vercel/analytics/astro'
+
+interface AstroProps {
+  lang?: string;
+  title: string;
+  desc: string;
+  keywords: string;
+  className?: string;
+  style?: string;
+  worker?: number;
+}
+
+/**
+ * Default layout.
+ * @version 25.1.10
+ */
+const {
+  lang = "en",
+  title,
+  desc,
+  keywords,
+  className = "m-0 w-full",
+  style,
+  worker = 1,
+} = Astro.props as AstroProps;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta name="title" content={title} />
+    <meta name="description" content={desc} />
+    <meta name="keywords" content={keywords} />
+
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <Analytics />
+  </head>
+  <body class={className} style={style}>
+    <slot />
+  </body>
+</html>

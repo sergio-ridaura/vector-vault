@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download SVG</title>
+</head>
+<body>
+    <button id="download-btn">Descargar SVG</button>
+
+    <script>
+        const generateSVG = ({ color = 'black', width = 100, height = 100, r = 50 }) => `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+                <circle cx="${width / 2}" cy="${height / 2}" r="${r}" fill="${color}" />
+            </svg>
+        `;
+
+        const downloadBtn = document.getElementById('download-btn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', () => {
+            const svgContent = generateSVG({ color: 'blue', width: 200, height: 200, r: 15 });
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'circle.svg';
+            link.click();
+                URL.revokeObjectURL(url); // Limpiar la URL
+            });
+        }
+    </script>
+</body>
+</html>

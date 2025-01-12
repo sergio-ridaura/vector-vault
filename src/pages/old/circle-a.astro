@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Generator</title>
+</head>
+<body>
+    <div id="svg-container"></div>
+
+    <script>
+        // Parámetros simulados
+        const params = new URLSearchParams({
+            color: 'blue',
+            width: '200',
+            height: '200',
+            r: '15'
+        });
+
+        // Extraer valores de los parámetros
+        const color = params.get('color');
+        const width = parseInt(params.get('width') || '0', 10);
+        const height = parseInt(params.get('height') || '0', 10);
+        const r = parseInt(params.get('r') || '0', 10);
+
+        // Crear el SVG dinámicamente
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+                <circle cx="${width / 2}" cy="${height / 2}" r="${r}" fill="${color}" />
+            </svg>
+        `;
+
+        // Insertar el SVG en el DOM
+        const svgContainer = document.getElementById('svg-container');
+        if (svgContainer) {
+            svgContainer.innerHTML = svg;
+        }
+    </script>
+</body>
+</html>

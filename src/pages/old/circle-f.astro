@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG Circle Generator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f5f5f5;
+      }
+      svg {
+        margin-top: 20px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      pre {
+        background: #e9ecef;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 20px;
+        text-align: left;
+        max-width: 90%;
+        overflow-x: auto;
+        font-family: monospace;
+        cursor: pointer;
+      }
+      pre:hover {
+        background: #d6d8db;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SVG Circle Generator</h1>
+    <div id="svg-container"></div>
+    <button id="download-btn">Download SVG</button>
+    <pre id="svg-code" title="Click to copy the code"></pre>
+
+    <script>
+      // Función para obtener los parámetros de la URL
+      function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          color: params.get("color") || "blue", // Color predeterminado
+          width: parseInt(params.get("width") || "100"), // Ancho predeterminado
+          height: parseInt(params.get("height") || "100"), // Alto predeterminado
+          radius: parseInt(params.get("r") || "40"), // Radio predeterminado
+        };
+      }
+
+      // Generar el SVG dinámicamente
+      function generateSVG({
+        color,
+        width,
+        height,
+        radius,
+      }: {
+        color: string;
+        width: number;
+        height: number;
+        radius: number;
+      }): string {
+        return `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+      <circle cx="${width / 2}" cy="${height / 2}" r="${radius}" fill="${color}" />
+    </svg>
+  `.trim(); // Eliminar espacios en blanco innecesarios
+      }
+
+      // Descargar el SVG como archivo
+      function downloadSVG(svgContent: string) {
+        // Crear un blob con el contenido del SVG
+        const blob = new Blob([svgContent], { type: "image/svg+xml" });
+        const url = URL.createObjectURL(blob);
+
+        // Crear un enlace temporal para descargar el archivo
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "circle.svg"; // Nombre del archivo
+        document.body.appendChild(link);
+        link.click();
+
+        // Limpiar el DOM
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      // Copiar el SVG al portapapeles
+      function copyToClipboard(text: string) {
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            alert("SVG code copied to clipboard!");
+          })
+          .catch((err) => {
+            console.error("Error copying text: ", err);
+            alert("Failed to copy SVG code.");
+          });
+      }
+
+      // Obtener parámetros de la URL
+      const params = getQueryParams();
+
+      // Generar y añadir el SVG al contenedor
+      const svgContainer = document.getElementById("svg-container");
+      const svgContent = generateSVG(params);
+      if (svgContainer) {
+        svgContainer.innerHTML = svgContent;
+      }
+
+      // Mostrar el código SVG en el <pre>
+      const svgCodeElement = document.getElementById("svg-code");
+      if (svgCodeElement) {
+        svgCodeElement.textContent = svgContent;
+      }
+
+      // Configurar el botón de descarga
+      const downloadButton = document.getElementById("download-btn");
+      if (downloadButton) {
+        downloadButton.addEventListener("click", () => {
+          downloadSVG(svgContent);
+        });
+      }
+
+      // Configurar el evento de clic en el <pre> para copiar el código
+      if (svgCodeElement) {
+        svgCodeElement.addEventListener("click", () => {
+          copyToClipboard(svgContent);
+        });
+      }
+    </script>
+  </body>
+</html>
