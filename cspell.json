@@ -1,0 +1,19 @@
+{
+  "version": "0.2",
+  "language": "en-GB, en-US, en, es-ES, es, lorem",
+  "ignorePaths": [
+    ".vscode",
+    "node_modules",
+    "package-lock.json"
+  ],
+  "dictionaryDefinitions": [],
+  "dictionaries": [],
+  "words": [
+    "ridaura",
+    "shellcheck",
+    "svgs",
+    "tsconfigs"
+  ],
+  "ignoreWords": [],
+  "import": []
+}
